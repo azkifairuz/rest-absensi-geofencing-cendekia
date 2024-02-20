@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     id_kelas: DataTypes.INTEGER,
     id_mk: DataTypes.INTEGER,
     id_dosen: DataTypes.INTEGER,
-    tipe_kelas: DataTypes.ENUM
+    tipe_kelas: DataTypes.ENUM("online","offline")
   }, {
     sequelize,
     modelName: 'Jadwal',

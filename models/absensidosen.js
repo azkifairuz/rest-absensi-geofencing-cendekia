@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   AbsensiDosen.init({
     id_jadwal: DataTypes.INTEGER,
     id_dosen: DataTypes.INTEGER,
-    status_kehadiran: DataTypes.ENUM
+    status_kehadiran: DataTypes.ENUM("hadir","izin","sakit","tanpa keterangan")
   }, {
     sequelize,
     modelName: 'AbsensiDosen',

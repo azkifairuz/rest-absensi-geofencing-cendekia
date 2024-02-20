@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       tipe_kelas: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM("online","offline")
       },
       createdAt: {
         allowNull: false,

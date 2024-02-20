@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       status_kehadiran: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM("hadir","izin","sakit","tanpa keterangan")
       },
       createdAt: {
         allowNull: false,

@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { responseMessage, responseData } = require("../utils/responseHandle");
 
-
 async function login(req, res) {
   try {
     const { username, password } = req.body;
@@ -24,7 +23,7 @@ async function login(req, res) {
       "a40a47053167cb92bcb9b46ceff99ae2b734f758fbd565b1d70fb73ca2c16458",
       { expiresIn: "360d" }
     );
-    await auth.update({ token }, { where: { id: user.id } });
+    await Account.update({ token }, { where: { id: user.id } });
 
     responseData(
       res,
@@ -33,6 +32,7 @@ async function login(req, res) {
         token: token,
         id_user: user.id,
         username: user.username,
+        roles:user.role
       },
       "Login successful"
     );

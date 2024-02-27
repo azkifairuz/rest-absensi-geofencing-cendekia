@@ -1,4 +1,4 @@
-const { Dosen,Mahasiswa, Account, sequelize } = require("../models");
+const { Dosen, Mahasiswa, Account, sequelize } = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const {
@@ -10,7 +10,12 @@ const {
 async function login(req, res) {
   try {
     const { username, password } = req.body;
-
+    if (!username) {
+      return responseMessage(res, 400, "username tidak boleh kosong", false);
+    }
+    if (!password) {
+      return responseMessage(res, 400, "password tidak boleh kosong", false);
+    }
     const user = await Account.findOne({ where: { username } });
 
     if (!user) {
@@ -27,7 +32,10 @@ async function login(req, res) {
       "a40a47053167cb92bcb9b46ceff99ae2b734f758fbd565b1d70fb73ca2c16458",
       { expiresIn: "360d" }
     );
-    await Account.update({ remembered_token:token }, { where: { id: user.id } });
+    await Account.update(
+      { remembered_token: token },
+      { where: { id: user.id } }
+    );
 
     responseData(
       res,
@@ -49,6 +57,12 @@ async function login(req, res) {
 async function registerDosen(req, res) {
   try {
     const { nidn, nm_dosen } = req.body;
+    if (!nidn) {
+      return responseMessage(res, 400, "nidn tidak boleh kosong", false);
+    }
+    if (!nm_dosen) {
+      return responseMessage(res, 400, "nama dosen tidak boleh kosong", false);
+    }
     const existingNidn = await Dosen.findOne({ where: { nidn: nidn } });
     const t = await sequelize.transaction();
 
@@ -57,7 +71,7 @@ async function registerDosen(req, res) {
         res,
         400,
         "dosen dengan nidn ini sudah ada",
-        "false"
+        false
       );
     }
     const dosenResult = await Dosen.create(
@@ -97,6 +111,20 @@ async function registerDosen(req, res) {
 async function registerMhs(req, res) {
   try {
     const { nim, nm_mahasiswa, kelas } = req.body;
+    if (!nim) {
+      return responseMessage(res, 400, "nim tidak boleh kosong", false);
+    }
+    if (!nm_mahasiswa) {
+      return responseMessage(
+        res,
+        400,
+        "nama mahsiswa tidak boleh kosong",
+        false
+      );
+    }
+    if (!kelas) {
+      return responseMessage(res, 400, "kelas tidak boleh kosong", false);
+    }
     const existingNim = await Mahasiswa.findOne({ where: { nim: nim } });
     const t = await sequelize.transaction();
 
@@ -147,5 +175,5 @@ async function registerMhs(req, res) {
 module.exports = {
   login,
   registerDosen,
-  registerMhs
+  registerMhs,
 };

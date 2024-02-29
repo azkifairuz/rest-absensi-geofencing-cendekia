@@ -3,8 +3,36 @@ const {
   responseMessage,
   responseData,
   internalError,
+  responseWithPagination,
 } = require("../utils/responseHandle");
 
+async function getListFakultas(req, res) {
+  const page = req.query.page || 1;
+  const pageSize = 10;
+  try {
+    const { count, rows: fakultas } = await Fakultas.findAndCountAll({
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    });
+    const totalPages = Math.ceil(count / pageSize);
+    const paginationInfo = {
+      currentPage: page,
+      totalPages: totalPages,
+      totalPosts: count,
+    };
+    responseWithPagination(
+      res,
+      200,
+      fakultas,
+      paginationInfo,
+      false
+
+    )
+  } catch (error) {
+    console.log("error",error);
+    internalError(res)
+  }
+}
 async function addFakultas(req, res) {
   try {
     const { kode_fakultas, nm_fakultas } = req.body;
@@ -98,8 +126,8 @@ async function deleteFakultas(req, res) {
 
     return responseMessage(res, 200, "berhasil menghapus fakultas", false);
   } catch (error) {
-    console.log("failed:",error);
-    return internalError(res)
+    console.log("failed:", error);
+    return internalError(res);
   }
 }
 
@@ -107,4 +135,5 @@ module.exports = {
   addFakultas,
   editFakultas,
   deleteFakultas,
+  getListFakultas,
 };

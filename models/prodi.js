@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Prodi.belongsTo(models.Fakultas, { foreignKey: 'id_fakultas', as: 'fakultas' });
     }
   }
   Prodi.init({

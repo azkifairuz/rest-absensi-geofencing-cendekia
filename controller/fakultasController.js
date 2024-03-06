@@ -70,7 +70,6 @@ async function addFakultas(req, res) {
   } catch (error) {
     console.error("Error adding fakultas:", error);
 
-    if (t) await t.rollback();
 
     return internalError(res);
   }

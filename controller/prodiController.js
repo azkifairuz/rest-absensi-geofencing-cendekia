@@ -54,75 +54,81 @@ async function getListProdi(req, res) {
 }
 async function addProdi(req, res) {
   try {
-    const { kode_fakultas, nm_fakultas } = req.body;
-    if (!kode_fakultas) {
+    const { kode_prodi, nm_prodi, fakultas } = req.body;
+    if (!kode_prodi) {
       return responseMessage(
         res,
         400,
-        "kode fakultas tidak boleh kosong",
+        "kode prodi tidak boleh kosong",
         false
       );
     }
-    if (!nm_fakultas) {
+    if (!nm_prodi) {
       return responseMessage(
         res,
         400,
-        "nama fakultas tidak boleh kosong",
+        "nama prodi tidak boleh kosong",
+        false
+      );
+    }
+    if (!fakultas) {
+      return responseMessage(
+        res,
+        400,
+        "fakultas tidak boleh kosong",
         false
       );
     }
 
-    const existingKodeFk = Fakultas.findOne({
-      where: { kode_fakultas: kode_fakultas },
+    const existingKodeFk = Prodi.findOne({
+      where: { kode_prodi: kode_prodi },
     });
 
     if (!existingKodeFk) {
-      return responseMessage(res, 404, "kode fakultas sudah ada", false);
+      return responseMessage(res, 404, "kode prodi sudah ada", false);
     }
 
-    await Fakultas.create({
-      kode_fakultas: kode_fakultas,
-      fakultas: nm_fakultas,
+    await Prodi.create({
+      kode_prodi: kode_prodi,
+      prodi: nm_prodi,
+      id_fakultas:fakultas,
     });
 
-    return responseMessage(res, 200, "fakultas berhasil ditambahkan", false);
+    return responseMessage(res, 200, "prodi berhasil ditambahkan", false);
   } catch (error) {
-    console.error("Error adding fakultas:", error);
-
-    if (t) await t.rollback();
-
+    console.error("Error adding prodi:", error);
     return internalError(res);
   }
 }
 
 async function editProdi(req, res) {
   try {
-    const { nm_fakultas } = req.body;
-    const { fakultas } = req.params;
-    const dataFakultas = await Fakultas.findOne({
-      where: { kode_fakultas: fakultas },
+    const { nm_prodi } = req.body;
+    const { prodi } = req.params;
+    const dataProdi = await Prodi.findOne({
+      where: { kode_prodi: prodi },
     });
-    if (!dataFakultas) {
+    if (!dataProdi) {
       return responseMessage(
         res,
         404,
-        `fakultas dengan kode ${fakultas} tidak ada`,
+        `fakultas dengan kode ${prodi} tidak ada`,
         false
       );
     }
-    if (!nm_fakultas) {
+    if (!nm_prodi) {
       return responseMessage(
         res,
         400,
-        "nama fakultas tidak boleh kosong",
+        "nama prodi tidak boleh kosong",
         false
       );
     }
-    await Fakultas.update(
-      { fakultas: nm_fakultas },
-      { where: { kode_fakultas: fakultas } }
+    await Prodi.update(
+      { prodi: nm_prodi },
+      { where: { kode_prodi: prodi } }
     );
-    return responseMessage(res, 200, "berhasil mengubah nama fakultas", false);
+    return responseMessage(res, 200, "berhasil mengubah nama prodi", false);
   } catch (error) {
     console.log("failed change name:", error);
     internalError(res);
@@ -131,16 +137,16 @@ async function editProdi(req, res) {
 
 async function deleteProdi(req, res) {
   try {
-    const { fakultas } = req.params;
-    if (!fakultas) {
+    const { prodi } = req.params;
+    if (!prodi) {
       return responseMessage(res, 400, "wajib isi angka setelah /", false);
     }
 
-    const deleteReturn = await Fakultas.destroy({
-      where: { id: fakultas },
+    const deleteReturn = await Prodi.destroy({
+      where: { id: prodi },
     });
     if (!deleteReturn) {
-      return responseMessage(res, 404, "fakultas tidak ditemukan", false);
+      return responseMessage(res, 404, "prodi tidak ditemukan", false);
     }
 
     return responseMessage(res, 200, "berhasil menghapus fakultas", false);

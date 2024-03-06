@@ -144,7 +144,6 @@ async function registerMhs(req, res) {
       },
       { transaction: t }
     );
-    //   console.log("Result", mahasiswaResult);
     const name = mahasiswaResult.dataValues.nm_mahasiswa.replace(/\s+/g, "_");
     const mhs_id = mahasiswaResult.dataValues.id;
 

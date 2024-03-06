@@ -1,7 +1,6 @@
-const { Fakultas,Prodi } = require("../models");
+const { Fakultas, Prodi } = require("../models");
 const {
   responseMessage,
-  responseData,
   internalError,
   responseWithPagination,
 } = require("../utils/responseHandle");
@@ -29,69 +28,47 @@ async function getListProdi(req, res) {
     };
     const formatedProdi = prodis.map((prodi) => {
       const idProdi = prodi.id;
-      
+
       return {
         idProdi,
         kode_prodi: prodi.kode_prodi,
         prodi: prodi.prodi,
         id_fakultas: prodi.id_fakultas,
-        fakultas: prodi.fakultas.fakultas
-
+        fakultas: prodi.fakultas.fakultas,
       };
     });
-    responseWithPagination(
-      res,
-      200,
-      formatedProdi,
-      paginationInfo,
-      false
-
-    )
+    responseWithPagination(res, 200, formatedProdi, paginationInfo, false);
   } catch (error) {
-    console.log("error",error);
-    internalError(res)
+    console.log("error", error);
+    internalError(res);
   }
 }
 async function addProdi(req, res) {
   try {
     const { kode_prodi, nm_prodi, fakultas } = req.body;
     if (!kode_prodi) {
-      return responseMessage(
-        res,
-        400,
-        "kode prodi tidak boleh kosong",
-        false
-      );
+      return responseMessage(res, 400, "kode prodi tidak boleh kosong", false);
     }
     if (!nm_prodi) {
-      return responseMessage(
-        res,
-        400,
-        "nama prodi tidak boleh kosong",
-        false
-      );
+      return responseMessage(res, 400, "nama prodi tidak boleh kosong", false);
     }
     if (!fakultas) {
-      return responseMessage(
-        res,
-        400,
-        "fakultas tidak boleh kosong",
-        false
-      );
+      return responseMessage(res, 400, "fakultas tidak boleh kosong", false);
     }
 
-    const existingKodeFk = Prodi.findOne({
+    const existingKodeFk =await Prodi.findOne({
       where: { kode_prodi: kode_prodi },
     });
 
-    if (!existingKodeFk) {
+    if (existingKodeFk) {
+
       return responseMessage(res, 404, "kode prodi sudah ada", false);
     }
 
     await Prodi.create({
       kode_prodi: kode_prodi,
       prodi: nm_prodi,
-      id_fakultas:fakultas,
+      id_fakultas: fakultas,
     });
 
     return responseMessage(res, 200, "prodi berhasil ditambahkan", false);
@@ -112,22 +89,14 @@ async function editProdi(req, res) {
       return responseMessage(
         res,
         404,
-        `fakultas dengan kode ${prodi} tidak ada`,
+        `prodi dengan kode ${prodi} tidak ada`,
         false
       );
     }
     if (!nm_prodi) {
-      return responseMessage(
-        res,
-        400,
-        "nama prodi tidak boleh kosong",
-        false
-      );
+      return responseMessage(res, 400, "nama prodi tidak boleh kosong", false);
     }
-    await Prodi.update(
-      { prodi: nm_prodi },
-      { where: { kode_prodi: prodi } }
-    );
+    await Prodi.update({ prodi: nm_prodi }, { where: { kode_prodi: prodi } });
     return responseMessage(res, 200, "berhasil mengubah nama prodi", false);
   } catch (error) {
     console.log("failed change name:", error);
@@ -149,7 +118,7 @@ async function deleteProdi(req, res) {
       return responseMessage(res, 404, "prodi tidak ditemukan", false);
     }
 
-    return responseMessage(res, 200, "berhasil menghapus fakultas", false);
+    return responseMessage(res, 200, "berhasil menghapus prodi", false);
   } catch (error) {
     console.log("failed:", error);
     return internalError(res);

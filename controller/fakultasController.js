@@ -1,7 +1,6 @@
 const { Fakultas } = require("../models");
 const {
   responseMessage,
-  responseData,
   internalError,
   responseWithPagination,
 } = require("../utils/responseHandle");
@@ -53,11 +52,11 @@ async function addFakultas(req, res) {
       );
     }
 
-    const existingKodeFk = Fakultas.findOne({
+    const existingKodeFk =await Fakultas.findOne({
       where: { kode_fakultas: kode_fakultas },
     });
 
-    if (!existingKodeFk) {
+    if (existingKodeFk) {
       return responseMessage(res, 404, "kode fakultas sudah ada", false);
     }
 

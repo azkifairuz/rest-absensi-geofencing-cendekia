@@ -63,7 +63,7 @@ async function addKelas(req, res) {
 
     await Kelas.create({
       kode_kelas: kode_kelas,
-      id_pro: prodi,
+      id_prodi: prodi,
     });
 
     return responseMessage(res, 200, "kelas berhasil ditambahkan", false);

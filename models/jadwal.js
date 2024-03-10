@@ -11,16 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Jadwal.belongsTo(models.Kelas, { foreignKey: "id_kelas", as: "kelas" });
+      Jadwal.belongsTo(models.MataKuliah, { foreignKey: "id_mk", as: "mk" });
+      Jadwal.belongsTo(models.Dosen, { foreignKey: "id_dosen", as: "dosen" });
+
     }
   }
   Jadwal.init({
+    hari: DataTypes.STRING,
     jam_masuk: DataTypes.TIME,
     jam_keluar: DataTypes.TIME,
-    tanggal: DataTypes.DATE,
     id_kelas: DataTypes.INTEGER,
     id_mk: DataTypes.INTEGER,
     id_dosen: DataTypes.INTEGER,
-    tipe_kelas: DataTypes.ENUM("online","offline")
   }, {
     sequelize,
     modelName: 'Jadwal',

@@ -15,6 +15,9 @@ module.exports = {
       id_mahasiswa: {
         type: Sequelize.INTEGER
       },
+      tanggal: {
+        type: Sequelize.DATE,
+      },
       status_kehadiran: {
         type: Sequelize.ENUM("hadir","izin","sakit","tanpa keterangan")
       },

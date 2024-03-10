@@ -10,6 +10,7 @@ const mhsRoute = require("./router/mahasiswaRoute");
 const fakultasRoute = require("./router/fakultasRoute");
 const prodiRoute = require("./router/prodiRoute");
 const kelasRoute = require("./router/kelasRoute");
+const jadwalRoute = require("./router/jadwalRoute");
 
 // Enable CORS for all routes
 app.use(cors());
@@ -18,7 +19,15 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use("/api/", authRoute, mhsRoute, fakultasRoute, prodiRoute, kelasRoute);
+app.use(
+  "/api/",
+  authRoute,
+  mhsRoute,
+  fakultasRoute,
+  prodiRoute,
+  kelasRoute,
+  jadwalRoute
+);
 // default route
 app.get("/", (req, res) => {
   res.send("API absendi cendekia");

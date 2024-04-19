@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 const authRoute = require("./router/authRoute");
+const absensiRoute = require("./router/absensiRoute");
 const mhsRoute = require("./router/mahasiswaRoute");
 const fakultasRoute = require("./router/fakultasRoute");
 const prodiRoute = require("./router/prodiRoute");
@@ -26,7 +27,9 @@ app.use(
   fakultasRoute,
   prodiRoute,
   kelasRoute,
-  jadwalRoute
+  jadwalRoute,
+  absensiRoute,
+  
 );
 // default route
 app.get("/", (req, res) => {

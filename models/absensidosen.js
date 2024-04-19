@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   AbsensiDosen.init({
     id_jadwal: DataTypes.INTEGER,
     id_dosen: DataTypes.INTEGER,
-    tanggal: DataTypes.DATE,                                                                              
+    tanggal: DataTypes.DATEONLY,                                                                              
     tipe_kelas: DataTypes.ENUM("online","offline"),
     status_kehadiran: DataTypes.ENUM("hadir","izin","sakit","tanpa keterangan")
   }, {

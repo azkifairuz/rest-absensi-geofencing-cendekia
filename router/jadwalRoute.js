@@ -7,5 +7,6 @@ router.delete("/delete-jadwal/:jadwal",jadwal.deleteJadwal)
 router.get("/jadwals",jadwal.listJadwal)
 router.get("/jadwal/:jadwal",jadwal.detailJadwal)
 router.get("/jadwal-by-kelas/:kelas",jadwal.listJadwalBykelas)
+router.get("/jadwal-by-dosen/:dosen",jadwal.listJadwalByDosen)
 
 module.exports = router

@@ -123,6 +123,60 @@ async function listJadwal(req, res) {
     internalError(res);
   }
 }
+
+async function listJadwalBykelas(req, res) {
+  const { kelas } = req.params
+  try {
+    const jadwals  = await Jadwal.findAll({
+      include: [
+        {
+          model: Kelas,
+          attributes: ["kode_kelas", "id_prodi"],
+          as: "kelas",
+          include: [
+            {
+              model: Prodi,
+              attributes: ["prodi"],
+              as: "prodi",
+            },
+          ],
+        },
+        {
+          model: MataKuliah,
+          attributes: ["kode_mk", "mata_kuliah"],
+          as: "mk",
+        },
+        {
+          model: Dosen,
+          attributes: ["nm_dosen"],
+          as: "dosen",
+        },
+      ],
+      where: {
+        id_kelas:kelas
+      }
+    });
+
+    const formatedJadwal = await jadwals.map((jadwal) => {
+      return {
+        id_jadwal: jadwal.id,
+        hari: jadwal.hari,
+        jam_masuk: jadwal.jam_masuk,
+        jam_keluar: jadwal.jam_keluar,
+        id_kelas: jadwal.id_kelas,
+        kelas: jadwal.kelas.kode_kelas,
+        prodi: jadwal.kelas.prodi.prodi,
+        id_dosen: jadwal.id_dosen,
+        dosen: jadwal.dosen.nm_dosen,
+        mata_kuliah: jadwal.mk.mata_kuliah,
+      };
+    });
+    responseData(res, 200, formatedJadwal, false);
+  } catch (error) {
+    internalError(res);
+  }
+}
+
 async function detailJadwal(req, res) {
   try {
     const { jadwal } = req.params;
@@ -188,10 +242,12 @@ async function deleteJadwal(req, res) {
     internalError(res);
   }
 }
+
 module.exports = {
   createJadwal,
   editJadwal,
   listJadwal,
+  listJadwalBykelas,
   deleteJadwal,
   detailJadwal,
 };

@@ -1,10 +1,19 @@
 const {
   responseMessage,
   responseData,
+  responseWithPagination,
   internalError,
 } = require("../utils/responseHandle");
 const { formatDate } = require("../utils/dateFormat");
-const { AbsensiDosen,AbsensiMahasiswa,Jadwal,Kelas,Dosen } = require("../models");
+const {
+  AbsensiDosen,
+  AbsensiMahasiswa,
+  Jadwal,
+  Kelas,
+  Dosen,
+  MataKuliah,
+  Prodi,
+} = require("../models");
 
 async function absensiDosen(req, res) {
   const { jadwal, type, dosen, status, inLocation } = req.body;
@@ -68,7 +77,7 @@ async function absensiMahasiswa(req, res) {
   if (!mahasiswa || !type || !jadwal || !status) {
     return responseMessage(res, 400, "field tidak boleh kosong", false);
   }
-  
+
   const today = formatDate(new Date());
   const existingDosenAbsence = await AbsensiDosen.findOne({
     where: {
@@ -78,7 +87,12 @@ async function absensiMahasiswa(req, res) {
   });
 
   if (!existingDosenAbsence) {
-    return responseMessage(res, 400, "Dosen belum absen, mahasiswa tidak dapat absen", false);
+    return responseMessage(
+      res,
+      400,
+      "Dosen belum absen, mahasiswa tidak dapat absen",
+      false
+    );
   }
   const existingAbsence = await AbsensiMahasiswa.findOne({
     where: {
@@ -126,73 +140,61 @@ async function absensiMahasiswa(req, res) {
   return responseMessage(res, 200, "berhasil absen", true);
 }
 
-async function getAllListAbsen(req,res) {
-  const page = req.query.page || 1;
-  const pageSize = 10;
+async function getAllListAbsen(req, res) {
+  const { idJadwal } = req.params
   try {
-    const { count, rows: jadwals } = await AbsensiDosen.findAndCountAll({
-      attributes:[
-        'id',
-        'tipe_kelas',
-        'tanggal',
-      ],
+    const  absensiDosen  = await AbsensiDosen.findAll({
+      attributes: ["id", "tipe_kelas", "tanggal"],
       include: [
         {
           model: Jadwal,
-          as: 'jadwals',
-          attributes: [],
+          as: "jadwal",
+          attributes: ["hari", "jam_masuk", "jam_keluar"],
           include: [
             {
-              model: Matakuliah,
-              as: 'matakuliahs',
-              attributes: [],
+              model: MataKuliah,
+              as: "mk",
+              attributes: ["mata_kuliah"],
             },
             {
               model: Dosen,
-              as: 'dosens',
-              attributes: [],
+              as: "dosen",
+              attributes: ["nm_dosen"],
             },
             {
               model: Kelas,
-              as: 'kelas',
+              as: "kelas",
+              attributes: ["kode_kelas"],
               include: {
                 model: Prodi,
-                as: 'prodi',
-                attributes: [],
+                as: "prodi",
+                attributes: ["prodi"],
               },
-              attributes: [],
             },
           ],
         },
       ],
-      where: {
-        tanggal: tanggal,
-      },
-      limit: pageSize,
-      ofset: (page - 1) * pageSize,
+      where:{
+        id_jadwal:idJadwal
+      }
     });
-    const totalPages = Math.ceil(count / pageSize);
-    const paginationInfo = {
-      currentPage: page,
-      totalPages: totalPages,
-      totalPosts: count,
-    };
-    const formatedJadwal = await jadwals.map((jadwal) => {
+
+    const formatedJadwal = await absensiDosen.map((absen) => {
       return {
-        id_jadwal: jadwal.id,
-        hari: jadwal.hari,
-        jam_masuk: jadwal.jam_masuk,
-        jam_keluar: jadwal.jam_keluar,
-        id_kelas: jadwal.id_kelas,
-        kelas: jadwal.kelas.kode_kelas,
-        prodi: jadwal.kelas.prodi.prodi,
-        id_dosen: jadwal.id_dosen,
-        dosen: jadwal.dosen.nm_dosen,
-        mata_kuliah: jadwal.mk.mata_kuliah,
+        id: absen.id,
+        kode_kelas: absen.jadwal.kelas.kode_kelas,
+        mata_kuliah: absen.jadwal.mk.mata_kuliah,
+        dosen: absen.jadwal.dosen.nm_dosen,
+        tipe_kelas: absen.tipe_kelas,
+        tanggal: absen.tanggal,
+        jam_masuk: absen.jadwal.jam_masuk,
+        jam_keluar: absen.jadwal.jam_keluar,
+        tanggal: absen.jadwal.hari,
       };
     });
-    responseWithPagination(res, 200, formatedJadwal, paginationInfo, false);
+    responseData(res, 200, formatedJadwal, "success");
   } catch (error) {
+    console.log(error);
     internalError(res);
   }
 }
@@ -200,4 +202,5 @@ async function getAllListAbsen(req,res) {
 module.exports = {
   absensiDosen,
   absensiMahasiswa,
+  getAllListAbsen,
 };

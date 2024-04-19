@@ -6,5 +6,6 @@ router.post("/edit-jadwal/:jadwal",jadwal.editJadwal)
 router.delete("/delete-jadwal/:jadwal",jadwal.deleteJadwal)
 router.get("/jadwals",jadwal.listJadwal)
 router.get("/jadwal/:jadwal",jadwal.detailJadwal)
+router.get("/jadwal-by-kelas/:kelas",jadwal.listJadwalBykelas)
 
 module.exports = router

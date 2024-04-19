@@ -54,6 +54,10 @@ async function login(req, res) {
   }
 }
 
+async function changePassword(req,res){
+
+}
+
 async function registerDosen(req, res) {
   try {
     const { nidn, nm_dosen } = req.body;
@@ -108,6 +112,7 @@ async function registerDosen(req, res) {
     return internalError(res);
   }
 }
+
 async function registerMhs(req, res) {
   try {
     const { nim, nm_mahasiswa, kelas } = req.body;

@@ -153,6 +153,9 @@ async function detailJadwal(req, res) {
       ],
       where: { id: jadwal },
     });
+    if (!dataJadwal) {
+      responseMessage(res,404,"jadwal tidak ditemukan",false)
+    }
     const jadwalResponse = {
       id_jadwal: dataJadwal.id,
       hari: dataJadwal.hari,

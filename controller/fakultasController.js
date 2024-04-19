@@ -32,6 +32,7 @@ async function getListFakultas(req, res) {
     internalError(res)
   }
 }
+
 async function addFakultas(req, res) {
   try {
     const { kode_fakultas, nm_fakultas } = req.body;
